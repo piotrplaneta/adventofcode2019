@@ -43,8 +43,7 @@ defmodule Day8 do
   """
   def layer_with_fewest_zeros_checksum do
     best_layer =
-      input()
-      |> Enum.chunk_every(input_layer_size())
+      layers()
       |> Enum.min_by(fn layer ->
         Enum.count(layer, &(&1 == 0))
       end)
