@@ -1,47 +1,35 @@
 defmodule IntCodeComputer do
   def run(state, step, inputs) do
-    case state[step] do
+    {instruction_code, parameter_modes} = parse_instruction(state[step])
+
+    case instruction_code do
       99 ->
         {:halt, [], [], state, step}
 
-      instruction ->
-        {instruction_code, parameter_modes} = parse_instruction(instruction)
+      4 ->
+        {output, updated_state, updated_step} =
+          execute_instruction(4, parameter_modes, state, step)
 
-        case instruction_code do
-          4 ->
-            {output, updated_state, updated_step} =
-              execute_instruction(4, parameter_modes, state, step)
+        {:output, [], output, updated_state, updated_step}
 
-            {:output, [], output, updated_state, updated_step}
-
-          3 ->
-            if length(inputs) == 0 do
-              {:input, [], [], state, step}
-            else
-              {updated_state, updated_step, updated_inputs} =
-                execute_instruction(3, parameter_modes, state, step, inputs)
-
-              run(updated_state, updated_step, updated_inputs)
-            end
+      3 ->
+        case length(inputs) do
+          0 ->
+            {:input, [], [], state, step}
 
           _ ->
-            {updated_state, updated_step} =
-              execute_instruction(instruction_code, parameter_modes, state, step)
+            {updated_state, updated_step, updated_inputs} =
+              execute_instruction(3, parameter_modes, state, step, inputs)
 
-            run(updated_state, updated_step, inputs)
+            run(updated_state, updated_step, updated_inputs)
         end
+
+      _other ->
+        {updated_state, updated_step} =
+          execute_instruction(instruction_code, parameter_modes, state, step)
+
+        run(updated_state, updated_step, inputs)
     end
-  end
-
-  defp parse_instruction(instruction) do
-    reversed =
-      instruction
-      |> to_string()
-      |> String.graphemes()
-      |> Enum.reverse()
-      |> Enum.map(&String.to_integer/1)
-
-    {Enum.at(reversed, 0), Enum.drop(reversed, 2)}
   end
 
   defp execute_instruction(3, parameter_modes, state, step, [input | rest]) do
@@ -148,5 +136,19 @@ defmodule IntCodeComputer do
 
   defp resolve_index(argument, 2, state) do
     argument + state[-1]
+  end
+
+  defp parse_instruction(instruction) do
+    reversed =
+      instruction
+      |> to_string()
+      |> String.graphemes()
+      |> Enum.reverse()
+
+    instruction_code =
+      reversed |> Enum.take(2) |> Enum.reverse() |> Enum.join() |> String.to_integer()
+
+    instruction_modes = reversed |> Enum.drop(2) |> Enum.map(&String.to_integer/1)
+    {instruction_code, instruction_modes}
   end
 end
