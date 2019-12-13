@@ -6,12 +6,6 @@ defmodule IntCodeComputer do
       99 ->
         {:halt, [], [], state, step}
 
-      4 ->
-        {output, updated_state, updated_step} =
-          execute_instruction(4, parameter_modes, state, step)
-
-        {:output, [], output, updated_state, updated_step}
-
       3 ->
         case length(inputs) do
           0 ->
@@ -23,6 +17,12 @@ defmodule IntCodeComputer do
 
             run(updated_state, updated_step, updated_inputs)
         end
+
+      4 ->
+        {output, updated_state, updated_step} =
+          execute_instruction(4, parameter_modes, state, step)
+
+        {:output, [], output, updated_state, updated_step}
 
       _other ->
         {updated_state, updated_step} =

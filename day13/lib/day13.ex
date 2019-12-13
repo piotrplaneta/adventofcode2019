@@ -85,7 +85,7 @@ defmodule Day13 do
     input() |> block_count()
   end
 
-  def block_count(instructions) do
+  defp block_count(instructions) do
     initial_state =
       0..length(instructions)
       |> Stream.zip(instructions)
@@ -96,8 +96,8 @@ defmodule Day13 do
       IntCodeComputer.run(state, step, [])
     end)
     |> Enum.take_while(fn {instruction, _, _, _, _} -> instruction != :halt end)
+    |> Enum.filter(fn {mode, _, _, _, _} -> mode == :output end)
     |> Enum.map(fn {_, _, output, _, _} -> output end)
-    |> Enum.filter(&(&1 != []))
     |> Enum.chunk_every(3)
     |> Enum.filter(fn [_ | [_ | [tile_id]]] -> tile_id == 2 end)
     |> length()
