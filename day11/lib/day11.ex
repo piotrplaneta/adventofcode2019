@@ -110,12 +110,10 @@ defmodule Day11 do
     case state[@output_mode_index] do
       0 ->
         updated_state = paint_area(state, result) |> Map.put(@output_mode_index, 1)
-
         {updated_state, step + 2}
 
       1 ->
         updated_state = move_robot(state, result) |> Map.put(@output_mode_index, 0)
-
         {updated_state, step + 2}
     end
   end
