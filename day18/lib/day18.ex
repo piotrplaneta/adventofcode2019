@@ -9,7 +9,7 @@ defmodule Day18 do
   ## Examples
 
       iex> Day18.steps_with_multiple_robots(Day18.advent_input_part2(), 80, 80)
-      72
+      2154
 
   """
   def steps_with_multiple_robots(input, max_x, max_y) do
